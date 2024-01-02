@@ -8,10 +8,8 @@ class OrientationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrientationBuilder(
       builder: (context, orientation) {
-        return Container(
-          child: const Center(
-            child: Homepage(),
-          ),
+        return const Center(
+          child: Homepage(),
         );
       },
     );

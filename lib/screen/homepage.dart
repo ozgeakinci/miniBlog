@@ -1,8 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:miniblog/blocs/article_bloc/article_bloc.dart';
+import 'package:miniblog/blocs/article_bloc/article_event.dart';
+import 'package:miniblog/blocs/article_bloc/article_state.dart';
 import 'package:miniblog/models/blog.dart';
 import 'package:miniblog/screen/add_blog.dart';
 import 'package:miniblog/widget/blog_item.dart';
@@ -55,17 +59,25 @@ class _HomepageState extends State<Homepage> {
                 ))
           ],
         ),
-        body: blogs.isEmpty
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: () async {
-                  fetchBlogs();
-                },
-                child: ListView.builder(
-                    itemCount: blogs.length,
-                    itemBuilder: (context, index) => BlogItem(
-                          blog: blogs[index],
-                        )),
-              ));
+        body: BlocBuilder<ArticleBloc, ArticleState>(
+          builder: (context, state) {
+            if (state is ArticleInitial) {
+              context.read<ArticleBloc>().add(FetchArticles());
+              return const Center(child: Text('veri yükleniyor...'));
+            }
+            if (state is ArticleLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state is ArticleLoaded) {
+              return ListView.builder(
+                  itemCount: state.blogs.length,
+                  itemBuilder: (context, index) =>
+                      BlogItem(blog: state.blogs.reversed.toList()[index]));
+            }
+            return const Center(
+              child: Text('Unknown State'),
+            );
+          },
+        ));
   }
 }
