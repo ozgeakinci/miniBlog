@@ -20,11 +20,32 @@ class _AddBlogState extends State<AddBlog> {
   String author = '';
 
   openImagePicker() async {
-    XFile? selectedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final ImageSource? source = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Select Image Source"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.camera),
+              child: const Text("Camera"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.gallery),
+              child: const Text("Gallery"),
+            ),
+          ],
+        );
+      },
+    );
 
-    setState(() {
-      selectedImage = selectedFile;
-    });
+    if (source != null) {
+      XFile? selectedFile = await _picker.pickImage(source: source);
+
+      setState(() {
+        selectedImage = selectedFile;
+      });
+    }
   }
 
   submitForm() async {
@@ -61,38 +82,41 @@ class _AddBlogState extends State<AddBlog> {
             key: _formKey,
             child: ListView(
               children: [
-                if (selectedImage != null)
-                  Image.file(File(selectedImage!.path),
-                      height: 200,
-                      width: double.infinity,
-                      fit: BoxFit.fitHeight),
-                ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        fixedSize: const Size(300, 200),
-                        backgroundColor: Colors.grey,
-                        foregroundColor: Colors.white),
-                    onPressed: () {
-                      openImagePicker();
-                    },
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                InkWell(
+                  onTap: () {
+                    openImagePicker();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey,
+                    ),
+                    height: 200,
+                    width: double.infinity,
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Text(
-                          "Upload Image",
-                          style: TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w400),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Icon(
-                          Icons.upload_outlined,
-                          size: 32,
-                        )
+                        if (selectedImage != null)
+                          Image.file(
+                            File(selectedImage!.path),
+                            height: 200,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        selectedImage == null
+                            ? const Text(
+                                "Upload Image",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Text("")
                       ],
-                    )),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),

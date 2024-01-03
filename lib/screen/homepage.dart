@@ -19,23 +19,7 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  List blogs = [];
   @override
-  void initState() {
-    super.initState();
-    fetchBlogs();
-  }
-
-  fetchBlogs() async {
-    Uri url = Uri.parse("https://tobetoapi.halitkalayci.com/api/Articles");
-    final response = await http.get(url);
-    final List jsonData = json.decode(response.body);
-
-    setState(() {
-      blogs = jsonData.map((json) => Blog.fromJson(json)).toList();
-    });
-  }
-
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: const Color(0xfff5f5f5),
@@ -69,10 +53,15 @@ class _HomepageState extends State<Homepage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state is ArticleLoaded) {
-              return ListView.builder(
-                  itemCount: state.blogs.length,
-                  itemBuilder: (context, index) =>
-                      BlogItem(blog: state.blogs.reversed.toList()[index]));
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ArticleBloc>().add(FetchArticles());
+                },
+                child: ListView.builder(
+                    itemCount: state.blogs.length,
+                    itemBuilder: (context, index) =>
+                        BlogItem(blog: state.blogs.reversed.toList()[index])),
+              );
             }
             return const Center(
               child: Text('Unknown State'),
