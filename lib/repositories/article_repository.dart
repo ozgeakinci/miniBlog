@@ -20,13 +20,12 @@ class ArticleRepository {
   }
 
   Future<void> addArticle(
-      String title, String content, String author, File? imageFile) async {
+      String title, String content, String author, String imageFile) async {
     Uri url = Uri.parse("https://tobetoapi.halitkalayci.com/api/Articles");
     var request = http.MultipartRequest("POST", url);
 
     if (imageFile != null) {
-      request.files
-          .add(await http.MultipartFile.fromPath("File", imageFile.path));
+      request.files.add(await http.MultipartFile.fromPath("File", imageFile));
     }
 
     request.fields['Title'] = title;

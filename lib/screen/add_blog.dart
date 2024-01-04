@@ -181,7 +181,7 @@ class _AddBlogState extends State<AddBlog> {
                         title: title,
                         content: content,
                         author: author,
-                        imageFile: selectedImage));
+                        imageFile: selectedImage!.path));
                     print(title);
                     print(content);
                     print(author);
