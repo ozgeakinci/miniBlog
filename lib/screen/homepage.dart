@@ -3,11 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:miniblog/blocs/article_bloc/article_bloc.dart';
 import 'package:miniblog/blocs/article_bloc/article_event.dart';
 import 'package:miniblog/blocs/article_bloc/article_state.dart';
-import 'package:miniblog/models/blog.dart';
 import 'package:miniblog/screen/add_blog.dart';
 import 'package:miniblog/widget/blog_item.dart';
 

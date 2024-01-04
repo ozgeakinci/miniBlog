@@ -47,71 +47,75 @@ class _BlogItemDetailState extends State<BlogItemDetail> {
             style: GoogleFonts.comfortaa(color: Colors.white, fontSize: 24),
           ),
         ),
-        body: BlocBuilder<ArticleDetailBloc, ArticleDetailState>(
-          builder: (context, state) {
-            print('Current state $state');
-            if (state is DetailInitial) {
-              context
-                  .read<ArticleDetailBloc>()
-                  .add(FetchArticleDetail(id: widget.id));
-              return const Center(child: Text('Veriler gönderiliyor...'));
-            }
-            if (state is DetailLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        body: ListView(
+          children: [
+            BlocBuilder<ArticleDetailBloc, ArticleDetailState>(
+              builder: (context, state) {
+                print('Current state $state');
+                if (state is DetailInitial) {
+                  context
+                      .read<ArticleDetailBloc>()
+                      .add(FetchArticleDetail(id: widget.id));
+                  return const Center(child: Text('Veriler gönderiliyor...'));
+                }
+                if (state is DetailLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            if (state is DetailLoaded) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    AspectRatio(
-                        aspectRatio: 4 / 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              width: double.infinity,
-                              child: Center(
-                                child: state.blog.thumbnail != null
-                                    ? Image.network(
-                                        state.blog.thumbnail.toString())
-                                    : const CircularProgressIndicator(),
-                              )),
-                        )),
-                    ListTile(
-                      title: Text(
-                        state.blog.title!,
-                        style: const TextStyle(
-                          fontSize: 24,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 15,
+                if (state is DetailLoaded) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        AspectRatio(
+                            aspectRatio: 4 / 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10)),
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: state.blog.thumbnail != null
+                                        ? Image.network(
+                                            state.blog.thumbnail.toString())
+                                        : const CircularProgressIndicator(),
+                                  )),
+                            )),
+                        ListTile(
+                          title: Text(
+                            state.blog.title!,
+                            style: const TextStyle(
+                              fontSize: 24,
+                            ),
                           ),
-                          Text(
-                            state.blog.content!,
-                            style: const TextStyle(fontSize: 16),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              Text(
+                                state.blog.content!,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              const SizedBox(
+                                height: 150,
+                              ),
+                              Text(state.blog.author!),
+                            ],
                           ),
-                          const SizedBox(
-                            height: 330,
-                          ),
-                          Text(state.blog.author!),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              );
-            }
+                        )
+                      ],
+                    ),
+                  );
+                }
 
-            return Center(child: Text(widget.id));
-          },
+                return Center(child: Text(widget.id));
+              },
+            ),
+          ],
         ));
   }
 }
